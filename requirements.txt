@@ -1,0 +1,11 @@
+flask
+requests
+flask-socketio
+pymongo
+pyyaml
+scikit-learn
+numpy
+pandas
+joblib
+scapy
+psutil

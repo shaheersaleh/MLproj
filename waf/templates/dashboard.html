@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ WAF Security Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Impressive Dashboard</title>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary-color: #2c3e50;   /* Dark navy for professionalism */
+        --secondary-color: #3498db; /* Trustworthy blue */
+        --accent-color: #f39c12;    /* Warm amber for energy */
+        --success-color: #fbfffc;   /* Fresh green */
+        --info-color: #ffffff;      /* Teal */
+        --background-light: #f9fbfd;
+        --background-white: #ffffff;
+        --border-color: #e6e6e6;
+        --text-primary: #2d3436;
+        --text-secondary: #636e72;
+        --text-muted: #a0a0a0;
+    }
+
+    * {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: var(--background-light);
+        color: var(--text-primary);
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    /* Navbar */
+    .navbar {
+        background: var(--background-white) !important;
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .navbar-brand {
+        font-weight: 700;
+        font-size: 1.5rem;
+        color: var(--primary-color) !important;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        background: var(--background-white) !important;
+        border-right: 1px solid var(--border-color);
+        min-height: 100vh;
+    }
+
+    .nav-link {
+        color: var(--text-secondary) !important;
+        border-radius: 8px;
+        margin: 6px 0;
+        padding: 10px 14px !important;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .nav-link.active, .nav-link:hover {
+        color: var(--primary-color) !important;
+        background-color: rgba(52, 152, 219, 0.12) !important;
+    }
+
+    /* Cards */
+    .card {
+        background: var(--background-white) !important;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    }
+
+    .card-header {
+        background: #f3f7fa !important;
+        border-bottom: 1px solid var(--border-color);
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+
+    /* Stats with subtle cheerful colors */
+    .stat-card {
+        background: var(--background-white);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    }
+
+    .stat-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: var(--primary-color);
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Buttons */
+    .btn-gradient {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: 600;
+        color: #fff !important;
+        transition: all 0.3s ease;
+    }
+
+    .btn-gradient:hover {
+        filter: brightness(1.1);
+        transform: translateY(-1px);
+    }
+
+    /* Tables */
+    .table {
+        background: var(--background-white);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .table th {
+        background: #eef4f9 !important;
+        color: var(--text-primary) !important;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.85rem;
+        border: none;
+    }
+
+    .table td {
+        color: var(--text-secondary) !important;
+        border-top: 1px solid var(--border-color);
+        vertical-align: middle;
+        max-width: 0;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+    }
+
+    .table tbody tr:hover td {
+        background: #f9fafc;
+        color: var(--primary-color);
+    }
+
+    /* Forms */
+    .form-control, .form-select {
+        background: #fff;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 0.95rem;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-check {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    .form-check-label {
+        white-space: normal;
+        overflow-wrap: anywhere;
+        line-height: 1.3;
+    }
+    .form-check-input {
+        flex: 0 0 auto;
+        margin-top: 4px;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 0.15rem rgba(243, 156, 18, 0.25);
+        outline: none;
+    }
+
+    .form-control::placeholder {
+        color: var(--text-muted);
+    }
+
+    /* Modals */
+    .modal-content {
+        background: var(--background-white);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+
+    /* Toasts */
+    /* Utilities for truncation/wrapping */
+    .text-truncate-1 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .text-wrap-any { overflow-wrap: anywhere; word-break: break-word; }
+    .code-wrap { white-space: normal; word-break: break-all; overflow-wrap: anywhere; }
+
+    /* Badges and status pills should not overflow */
+    .status-badge { white-space: nowrap; }
+    .toast {
+        background: var(--background-white);
+        border: 1px solid var(--border-color);
+        border-left: 5px solid var(--accent-color);
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: var(--secondary-color);
+        border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-color);
+    }
+</style>
+        
+    </head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-shield-alt me-2"></i>
+                 NeuroWall 
+            </a>
+            <div class="navbar-nav ms-auto d-flex align-items-center">
+                <span class="real-time-badge me-3">
+                    <i class="fas fa-broadcast-tower me-1"></i>
+                    LIVE
+                </span>
+                <span class="navbar-text">
+                    <span class="status-indicator status-online"></span>
+                    <span id="status-indicator">System Online</span>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid px-0">
+        <div class="row g-0">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4 security-center">
+                        <div class="pulse">
+                            <img id="security-center-icon" class="security-center-icon" src="https://img.icons8.com/fluency/48/shield.png" alt="Security Icon">
+                        </div>
+                        <h6 class="text-secondary mt-2">Security Center</h6>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#dashboard" data-bs-toggle="tab">
+                                <i class="fas fa-tachometer-alt me-2"></i>
+                                 Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#requests" data-bs-toggle="tab">
+                                <i class="fas fa-list me-2"></i>
+                                 Request Log
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#ml-models" data-bs-toggle="tab">
+                                <i class="fas fa-brain me-2"></i>
+                                 ML Models
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#settings" data-bs-toggle="tab">
+                                <i class="fas fa-cog me-2"></i>
+                                 Settings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#rules" data-bs-toggle="tab">
+                                <i class="fas fa-shield me-2"></i>
+                                 Rules
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#ips" data-bs-toggle="tab">
+                                <i class="fas fa-ban me-2"></i>
+                                 Blocked IPs
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#analytics" data-bs-toggle="tab">
+                                <i class="fas fa-chart-line me-2"></i>
+                                 Analytics
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#network-flow" data-bs-toggle="tab">
+                                <i class="fas fa-network-wired me-2"></i>
+                                 Network Flow
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-3">
+                <div class="tab-content">
+                    <!-- Dashboard Tab -->
+                    <div class="tab-pane fade show active" id="dashboard">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Dashboard</h1>
+                            <div class="btn-toolbar mb-2 mb-md-0">
+                                <div class="btn-group me-2">
+                                    <button type="button" class="btn btn-sm btn-primary" onclick="refreshStats()">
+                                        <i class="fas fa-sync-alt"></i> Refresh
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stats Cards -->
+                        <div class="row mb-4">
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="stat-card primary">
+                                    <i class="fas fa-globe stat-icon"></i>
+                                    <div class="stat-number" id="total-requests">0</div>
+                                    <div class="stat-label">Total Requests</div>
+                                    <small class="text-muted">Last 24 hours</small>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="stat-card success">
+                                    <i class="fas fa-check-circle stat-icon"></i>
+                                    <div class="stat-number" id="allowed-requests">0</div>
+                                    <div class="stat-label">Allowed Requests</div>
+                                    <small class="text-muted">Safe traffic</small>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="stat-card danger">
+                                    <i class="fas fa-ban stat-icon"></i>
+                                    <div class="stat-number" id="blocked-requests">0</div>
+                                    <div class="stat-label">Blocked Requests</div>
+                                    <small class="text-muted">Threats detected</small>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="stat-card warning">
+                                    <i class="fas fa-percentage stat-icon"></i>
+                                    <div class="stat-number" id="block-rate">0%</div>
+                                    <div class="stat-label">Block Rate</div>
+                                    <small class="text-muted">Threat percentage</small>
+                                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Stats Row -->
+                        <div class="row mb-4">
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="stat-card">
+                                    <i class="fas fa-shield-alt stat-icon"></i>
+                                    <div class="stat-number" id="currently-blocked-ips">0</div>
+                                    <div class="stat-label">Currently Blocked IPs</div>
+                                    <small class="text-muted">Real-time active blocks</small>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="stat-card">
+                                    <i class="fas fa-list stat-icon"></i>
+                                    <div class="stat-number" id="total-blocked-ips">0</div>
+                                    <div class="stat-label">Total Blocked IPs</div>
+                                    <small class="text-muted">All-time</small>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="stat-card">
+                                    <i class="fas fa-clock stat-icon"></i>
+                                    <div class="stat-number" id="expired-blocked-ips">0</div>
+                                    <div class="stat-label">Expired Blocked IPs</div>
+                                    <small class="text-muted">No longer enforced</small>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-md-6 mb-4">
+                                <div class="stat-card">
+                                    <i class="fas fa-brain stat-icon"></i>
+                                    <div class="stat-label mb-2">ML Models In Use</div>
+                                    <div class="text-wrap-any">
+                                        <div>text model</div>
+                                        <div>param_tamper_model</div>
+                                    </div>
+                                    <small class="text-muted">Static configuration</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Charts Row -->
+                        <div class="row">
+                            <div class="col-xl-8 col-lg-7">
+                                <div class="card shadow mb-4">
+                                    <div class="card-header py-2 py-md-3 d-flex flex-row align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">Attack Types</h6>
+                                    </div>
+                                    <div class="card-body p-3 p-md-4" style="height: 340px;">
+                                        <canvas id="attackChart" style="height: 100% !important;"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4 col-lg-5">
+                                <div class="card shadow mb-4">
+                                    <div class="card-header py-2 py-md-3">
+                                        <h6 class="m-0 font-weight-bold text-primary">Recent Activity</h6>
+                                    </div>
+                                    <div class="card-body p-3 p-md-4 recent-activity-body">
+                                        <div id="recent-activity" class="activity-feed">
+                                            <!-- Recent activity will be populated here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Requests Tab -->
+                    <div class="tab-pane fade" id="requests">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Request Log</h1>
+                            <div class="btn-toolbar mb-2 mb-md-0">
+                                <button type="button" class="btn btn-sm btn-primary me-2" onclick="refreshRequests()">
+                                    <i class="fas fa-sync-alt"></i> Refresh
+                                </button>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="checkbox" id="blocked-only">
+                                    <label class="form-check-label" for="blocked-only">
+                                        Blocked Only
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Filters Row -->
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <label for="ip-filter" class="form-label">IP Address</label>
+                                <input type="text" class="form-control" id="ip-filter" placeholder="Filter by IP">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="method-filter" class="form-label">Method</label>
+                                <select class="form-select" id="method-filter">
+                                    <option value="">All Methods</option>
+                                    <option value="GET">GET</option>
+                                    <option value="POST">POST</option>
+                                    <option value="PUT">PUT</option>
+                                    <option value="DELETE">DELETE</option>
+                                    <option value="HEAD">HEAD</option>
+                                    <option value="OPTIONS">OPTIONS</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="path-filter" class="form-label">Path</label>
+                                <input type="text" class="form-control" id="path-filter" placeholder="Filter by path">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">&nbsp;</label>
+                                <button type="button" class="btn btn-primary d-block w-100" onclick="applyFilters()">
+                                    <i class="fas fa-filter"></i> Apply Filters
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover align-middle table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>IP Address</th>
+                                        <th>Method</th>
+                                        <th>Path</th>
+                                        <th>User Agent</th>
+                                        <th>Status</th>
+                                        <th>Reason</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="requests-table">
+                                    <!-- Requests will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <nav aria-label="Requests pagination">
+                            <ul class="pagination justify-content-center" id="requests-pagination">
+                                <!-- Pagination will be populated here -->
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <!-- ML Models Tab -->
+                    <div class="tab-pane fade" id="ml-models">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">🤖 ML Model Management</h1>
+                        </div>
+
+                        <!-- ML Model Stats -->
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="stat-card info">
+                                    <i class="fas fa-brain fa-3x mb-3 opacity-75"></i>
+                                    <div class="stat-number">2</div>
+                                    <div class="stat-label">Active Models</div>
+                                    <small class="text-muted">Text + Parameter</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card primary">
+                                    <i class="fas fa-shield-alt fa-3x mb-3 opacity-75"></i>
+                                    <div class="stat-number" id="ml-status">Active</div>
+                                    <div class="stat-label">Detection Status</div>
+                                    <small class="text-muted">Real-time protection</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card warning">
+                                    <i class="fas fa-sliders-h fa-3x mb-3 opacity-75"></i>
+                                    <div class="stat-number" id="threshold-value1">0.9</div>
+                                    <div class="stat-label">Confidence Threshold</div>
+                                    <small class="text-muted">Detection sensitivity</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ML Model Configuration -->
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="card shadow-sm">
+                                    <div class="card-header py-2 py-md-3 d-flex align-items-center justify-content-between">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-brain me-2"></i>
+                                            ML Model Configuration
+                                        </h5>
+                                    </div>
+                                    <div class="card-body p-3 p-md-4">
+                                        <div class="row">
+                            <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <div class="form-check form-switch">
+                                                        <input class="form-check-input" type="checkbox" id="ml-enabled-switch" checked>
+                                                <label class="form-check-label" for="ml-enabled-switch">
+                                                            Enable ML Model Detection
+                                                </label>
+                                            </div>
+                                                    <small class="text-muted">Uses both text-based and parameter-tampering models</small>
+                                        </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="confidence-threshold-slider" class="form-label">
+                                                        Confidence Threshold: <span id="threshold-value2">0.9</span>
+                                            </label>
+                                            <input type="range" class="form-range" id="confidence-threshold-slider" 
+                                                           min="0.1" max="1.0" step="0.1" value="0.9">
+                                            <div class="d-flex justify-content-between">
+                                                <small>Low (0.1)</small>
+                                                <small>High (1.0)</small>
+                                            </div>
+                                                    <small class="text-muted">Only block requests above this confidence level</small>
+                                        </div>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-success-gradient">
+                                            <i class="fas fa-save me-2"></i>Save Configuration
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-header py-2 py-md-3 d-flex align-items-center justify-content-between">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            Current Status
+                                        </h5>
+                                    </div>
+                                    <div class="card-body p-3 p-md-4">
+                                        <div class="text-center">
+                                            <div class="mb-2">
+                                                <i class="fas fa-brain fa-2x text-primary"></i>
+                                            </div>
+                                            <div class="h6 mb-1" id="ml-status">Active</div>
+                                            <div class="text-muted small">Text + Parameter Models</div>
+                                            <div class="mt-2">
+                                                <span class="badge bg-success">Dual Model System</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Tab -->
+                    <div class="tab-pane fade" id="settings">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">WAF Settings</h1>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">Rate Limiting</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input" type="checkbox" id="rate-limiting-enabled">
+                                                <label class="form-check-label" for="rate-limiting-enabled">
+                                                    Enable Rate Limiting
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="max-requests" class="form-label">Max Requests</label>
+                                            <input type="number" class="form-control" id="max-requests" min="1" max="100">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="window-seconds" class="form-label">Window (seconds)</label>
+                                            <input type="number" class="form-control" id="window-seconds" min="1" max="3600">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="block-time" class="form-label">Block Time (seconds)</label>
+                                            <input type="number" class="form-control" id="block-time" min="1" max="86400">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">Plugins</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" id="plugin-block-admin">
+                                                    <label class="form-check-label" for="plugin-block-admin">
+                                                        Block Admin Access
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" id="plugin-block-ip">
+                                                    <label class="form-check-label" for="plugin-block-ip" class="text-wrap-any">
+                                                        Block IP Plugin
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" id="plugin-block-user-agent">
+                                                    <label class="form-check-label" for="plugin-block-user-agent">
+                                                        Block User Agent
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-primary" onclick="saveSettings()">
+                                    <i class="fas fa-save me-2"></i>Save Settings
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rules Tab -->
+                    <div class="tab-pane fade" id="rules">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">WAF Rules</h1>
+                            <div>
+                                <button type="button" class="btn btn-primary me-2" onclick="refreshRules()">
+                                    <i class="fas fa-sync-alt"></i> Refresh
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="saveRules()">
+                                    <i class="fas fa-save me-2"></i>Save Rules
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Rules Statistics -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="card border-left-primary shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                    Total Rules
+                                                </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-rules">0</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-shield-alt fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card border-left-danger shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                                    Block Rules
+                                                </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="block-rules">0</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-ban fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card border-left-info shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                    Log Rules
+                                                </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800" id="log-rules">0</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-file-alt fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card border-left-warning shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                    Last Modified
+                                                </div>
+                                                <div class="h6 mb-0 font-weight-bold text-gray-800" id="rules-last-modified">N/A</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-clock fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card shadow-sm">
+                            <div class="card-header py-2 py-md-3 d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">Rules Editor</h5>
+                                <button type="button" class="btn btn-primary" onclick="addNewRule()">
+                                    <i class="fas fa-plus me-2"></i>Add New Rule
+                                </button>
+                            </div>
+                            <div class="card-body p-3 p-md-4">
+                                <div id="rules-editor">
+                                    <!-- Rules editor will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Add/Edit Rule Modal -->
+                        <div class="modal fade" id="ruleModal" tabindex="-1">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="ruleModalTitle">Add New Rule</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="ruleForm">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="rule-id" class="form-label">Rule ID</label>
+                                                        <input type="text" class="form-control" id="rule-id" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="rule-action" class="form-label">Action</label>
+                                                        <select class="form-select" id="rule-action" required>
+                                                            <option value="block">Block</option>
+                                                            <option value="log">Log</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="rule-pattern" class="form-label">Pattern (Regex)</label>
+                                                <input type="text" class="form-control" id="rule-pattern" required>
+                                                <small class="text-muted">Enter a regular expression pattern to match</small>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="rule-description" class="form-label">Description</label>
+                                                <textarea class="form-control" id="rule-description" rows="3" required></textarea>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="button" class="btn btn-primary" onclick="saveRule()">Save Rule</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Blocked IPs Tab -->
+                    <div class="tab-pane fade" id="ips">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Blocked IP Addresses</h1>
+                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#blockIpModal">
+                                <i class="fas fa-plus me-2"></i>Block IP
+                            </button>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover align-middle table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>IP Address</th>
+                                        <th>Status</th>
+                                        <th>Blocked Until</th>
+                                        <th>Remaining Time</th>
+                                        <th>Total Requests</th>
+                                        <th>Blocked Requests</th>
+                                        <th>Recent Activity</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="blocked-ips-table">
+                                    <!-- Blocked IPs will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Analytics Tab -->
+                    <div class="tab-pane fade" id="analytics">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">Analytics</h1>
+                        </div>
+
+                        
+
+                        <div class="row">
+                            <div class="col-xl-8 col-lg-7">
+                                <div class="card shadow mb-4">
+                                    <div class="card-header py-2 py-md-3 d-flex align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">Daily Request Trends</h6>
+                                    </div>
+                                    <div class="card-body p-3 p-md-4" style="height: 320px;">
+                                        <p class="text-muted small">This shows how many requests were allowed vs blocked each day. Green is safe traffic; red is blocked threats.</p>
+                                        <canvas id="analyticsChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-4 col-lg-5">
+                                <div class="card shadow mb-4">
+                                    <div class="card-header py-2 py-md-3 d-flex align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">Summary</h6>
+                                    </div>
+                                    <div class="card-body p-3 p-md-4">
+                                        <div id="analytics-summary">
+                                            <!-- Analytics summary will be populated here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xl-4 col-lg-4">
+                                <div class="card shadow mb-4">
+                                    <div class="card-header py-2 py-md-3 d-flex align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">Attack types predicted by ML</h6>
+                                    </div>
+                                    <div class="card-body p-3 p-md-4" style="height: 320px;">
+                                        <p class="text-muted small">These are attack categories identified by the ML model. Taller bars mean more blocks.</p>
+                                        <canvas id="mlTypesChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-4">
+                                <div class="card shadow mb-4">
+                                    <div class="card-header py-2 py-md-3 d-flex align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">Rule-based blocks</h6>
+                                    </div>
+                                    <div class="card-body p-3 p-md-4" style="height: 320px;">
+                                        <p class="text-muted small">Which rules blocked the most requests. Useful for tuning rule sets.</p>
+                                        <canvas id="ruleBlocksChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-4">
+                                <div class="card shadow mb-4">
+                                    <div class="card-header py-2 py-md-3 d-flex align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">Plugin-based blocks</h6>
+                                    </div>
+                                    <div class="card-body p-3 p-md-4" style="height: 320px;">
+                                        <p class="text-muted small">Which plugins blocked requests (e.g., admin access, IP/user-agent filters).</p>
+                                        <canvas id="pluginBlocksChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card shadow mb-4">
+                                    <div class="card-header py-2 py-md-3 d-flex align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">Comparison: ML vs Rules vs Plugins</h6>
+                                    </div>
+                                    <div class="card-body p-3 p-md-4" style="height: 320px;">
+                                        <p class="text-muted small">Overall blocks by each protection layer. Helps spot which layer is most active.</p>
+                                        <canvas id="layerComparisonChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Network Flow Tab -->
+                    <div class="tab-pane fade" id="network-flow">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                            <h1 class="h2">🌐 Network Flow Analysis</h1>
+                            <div class="btn-toolbar mb-2 mb-md-0">
+                                <button type="button" class="btn btn-primary me-2" onclick="refreshNetworkFlow()">
+                                    <i class="fas fa-sync-alt"></i> Refresh
+                                </button>
+                                <button type="button" class="btn btn-danger-gradient" onclick="testNetworkFlow()">
+                                    <i class="fas fa-play me-2"></i>Test Flow
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Network Flow Status -->
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="stat-card info">
+                                    <i class="fas fa-network-wired fa-3x mb-3 opacity-75"></i>
+                                    <div class="stat-number" id="flow-status">Inactive</div>
+                                    <div class="stat-label">Flow Status</div>
+                                    <small class="text-muted">Packet capture</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card warning">
+                                    <i class="fas fa-exclamation-triangle fa-3x mb-3 opacity-75"></i>
+                                    <div class="stat-number" id="flow-issue">Scapy Missing</div>
+                                    <div class="stat-label">Issue Detected</div>
+                                    <small class="text-muted">Dependencies</small>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card primary">
+                                    <i class="fas fa-cogs fa-3x mb-3 opacity-75"></i>
+                                    <div class="stat-number" id="flow-features">0</div>
+                                    <div class="stat-label">Active Features</div>
+                                    <small class="text-muted">Non-zero values</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Network Flow Information -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-info-circle me-2"></i>
+                                            Flow Analysis Status
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="flow-status-content">
+                                            <div class="alert alert-warning" role="alert">
+                                                <h6 class="alert-heading">
+                                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                                    Network Flow Analysis Disabled
+                                                </h6>
+                                                <p class="mb-2">The network flow features are currently returning zero values because:</p>
+                                                <ul class="mb-0">
+                                                    <li><strong>Scapy not available:</strong> The packet capture library is not installed</li>
+                                                    <li><strong>Simplified mode:</strong> The ML manager is running in simplified mode</li>
+                                                    <li><strong>No packet capture:</strong> Network packets are not being captured</li>
+                                                </ul>
+                                            </div>
+                                            <div class="mt-3">
+                                                <h6>To enable network flow analysis:</h6>
+                                                <ol>
+                                                    <li>Install Scapy: <code>pip install scapy</code></li>
+                                                    <li>Run as administrator/root for packet capture</li>
+                                                    <li>Configure network interface permissions</li>
+                                                </ol>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="card-title mb-0">
+                                            <i class="fas fa-chart-bar me-2"></i>
+                                            Feature Values
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="feature-values-content">
+                                            <p class="text-muted">All network flow features are currently set to zero.</p>
+                                            <div class="table-responsive">
+                                                <table class="table table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Feature</th>
+                                                            <th>Value</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="feature-values-table">
+                                                        <tr>
+                                                            <td>Destination Port</td>
+                                                            <td><span class="badge bg-secondary">0</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Flow Bytes/s</td>
+                                                            <td><span class="badge bg-secondary">0</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Packet Length Std</td>
+                                                            <td><span class="badge bg-secondary">0</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Flow IAT Mean</td>
+                                                            <td><span class="badge bg-secondary">0</span></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Network Flow Configuration -->
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Block IP Modal -->
+    <div class="modal fade" id="blockIpModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-ban me-2"></i>
+                        🚫 Block IP Address
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="block-ip-address" class="form-label">
+                            <i class="fas fa-map-marker-alt me-1"></i>
+                            IP Address
+                        </label>
+                        <input type="text" class="form-control" id="block-ip-address" placeholder="192.168.1.1">
+                        <div class="form-text">Enter a valid IPv4 address to block</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="block-duration" class="form-label">
+                            <i class="fas fa-clock me-1"></i>
+                            Block Duration
+                        </label>
+                        <select class="form-select" id="block-duration">
+                            <option value="300">⏱️ 5 minutes</option>
+                            <option value="900">⏱️ 15 minutes</option>
+                            <option value="1800">⏱️ 30 minutes</option>
+                            <option value="3600" selected>⏱️ 1 hour</option>
+                            <option value="7200">⏱️ 2 hours</option>
+                            <option value="14400">⏱️ 4 hours</option>
+                            <option value="28800">⏱️ 8 hours</option>
+                            <option value="86400">⏱️ 1 day</option>
+                            <option value="604800">⏱️ 1 week</option>
+                            <option value="2592000">⏱️ 1 month</option>
+                            <option value="0">♾️ Permanent</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="block-reason" class="form-label">
+                            <i class="fas fa-comment me-1"></i>
+                            Reason for Blocking
+                        </label>
+                        <textarea class="form-control" id="block-reason" rows="3" 
+                                  placeholder="Enter the reason for blocking this IP address (e.g., suspicious activity, multiple failed attempts, etc.)"></textarea>
+                    </div>
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> This will immediately block all requests from the specified IP address.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-danger-gradient" onclick="blockIp()">
+                        <i class="fas fa-ban me-1"></i>Block IP Address
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast for notifications -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="notification-toast" class="toast" role="alert">
+            <div class="toast-header">
+                <strong class="me-auto">WAF Dashboard</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toast-message">
+                <!-- Toast message will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    
+    <script>
+        // Enhanced JavaScript for the new dashboard features
+        
+        // ML Model Status Functions
+        function refreshMLModels() {
+            // Update ML model status display
+            const mlEnabled = document.getElementById('ml-enabled-switch').checked;
+            const status = mlEnabled ? 'Active' : 'Disabled';
+            document.getElementById('ml-status').textContent = status;
+            
+            // Update status badge
+            const badge = document.querySelector('.badge');
+            if (badge) {
+                badge.className = mlEnabled ? 'badge bg-success' : 'badge bg-secondary';
+                badge.textContent = mlEnabled ? 'Dual Model System' : 'Disabled';
+            }
+        }
+        
+        function saveMLSettings() {
+            const mlEnabled = document.getElementById('ml-enabled-switch').checked;
+            const confidenceThreshold = document.getElementById('confidence-threshold-slider').value;
+            
+            const settings = {
+                ml_model: {
+                    enabled: mlEnabled,
+                    confidence_threshold: parseFloat(confidenceThreshold)
+                }
+            };
+            
+            fetch('/api/settings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(settings)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('confidence-threshold-display').textContent = confidenceThreshold;
+                    showNotification('ML settings saved successfully', 'success');
+                } else {
+                    showNotification('Error saving settings: ' + data.error, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Failed to save ML settings', 'error');
+            });
+        }
+        
+        function saveSettings() {
+            // Collect all settings from the form
+            const settings = {
+                rate_limiting: {
+                    enabled: document.getElementById('rate-limiting-enabled').checked,
+                    max_requests: parseInt(document.getElementById('max-requests').value),
+                    window_seconds: parseInt(document.getElementById('window-seconds').value),
+                    block_time: parseInt(document.getElementById('block-time').value)
+                },
+                ml_model: {
+                    enabled: document.getElementById('ml-enabled-switch').checked,
+                    confidence_threshold: parseFloat(document.getElementById('confidence-threshold-slider').value)
+                },
+                plugins: {
+                    block_admin: document.getElementById('plugin-block-admin').checked,
+                    block_ip: document.getElementById('plugin-block-ip').checked,
+                    block_user_agent: document.getElementById('plugin-block-user-agent').checked
+                },
+                rules: {
+                    enabled: true,
+                    auto_update: false
+                }
+            };
+            
+            fetch('/api/settings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(settings)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('All settings saved successfully', 'success');
+                } else {
+                    showNotification('Error saving settings: ' + data.error, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Failed to save settings', 'error');
+            });
+        }
+        
+        // Network Flow Functions
+        function refreshNetworkFlow() {
+            fetch('/api/network-flow-status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        showNotification('Error loading network flow status: ' + data.error, 'error');
+                        return;
+                    }
+                    
+                    // Update status cards
+                    document.getElementById('flow-status').textContent = data.status;
+                    document.getElementById('flow-issue').textContent = data.issue;
+                    document.getElementById('flow-features').textContent = data.active_features;
+                    
+                    // Load actual network flow features
+                    loadNetworkFlowFeatures();
+                    
+                    // Update status content
+                    const statusContent = document.getElementById('flow-status-content');
+                    if (data.scapy_available) {
+                        statusContent.innerHTML = `
+                            <div class="alert alert-success" role="alert">
+                                <h6 class="alert-heading">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    Network Flow Analysis Active
+                                </h6>
+                                <p class="mb-2">Scapy is successfully installed and ready for packet capture.</p>
+                                <ul class="mb-0">
+                                    <li><strong>Status:</strong> ${data.status}</li>
+                                    <li><strong>Total Features:</strong> ${data.total_features}</li>
+                                    <li><strong>Active Features:</strong> ${data.active_features}</li>
+                                    <li><strong>Available Interfaces:</strong> ${data.interfaces.length}</li>
+                                </ul>
+                            </div>
+                            <div class="mt-3">
+                                <h6>Available Network Interfaces:</h6>
+                                <ul>
+                                    ${data.interfaces.slice(0, 5).map(iface => `<li><code>${iface}</code></li>`).join('')}
+                                    ${data.interfaces.length > 5 ? `<li>... and ${data.interfaces.length - 5} more</li>` : ''}
+                                </ul>
+                            </div>
+                        `;
+                    } else {
+                        statusContent.innerHTML = `
+                            <div class="alert alert-warning" role="alert">
+                                <h6 class="alert-heading">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Network Flow Analysis Disabled
+                                </h6>
+                                <p class="mb-2">Scapy is not available. Install it to enable network flow analysis:</p>
+                                <ul class="mb-0">
+                                    <li><strong>Install:</strong> <code>pip install scapy</code></li>
+                                    <li><strong>Run as admin:</strong> For packet capture permissions</li>
+                                    <li><strong>Configure firewall:</strong> Allow packet capture</li>
+                                </ul>
+                            </div>
+                        `;
+                    }
+                    
+                    showNotification('Network flow status refreshed', 'success');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Failed to refresh network flow status', 'error');
+                });
+        }
+        
+        function loadNetworkFlowFeatures() {
+            fetch('/api/network-flow-features')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.features) {
+                        // Update the feature values table
+                        const tableBody = document.getElementById('feature-values-table');
+                        if (tableBody) {
+                            tableBody.innerHTML = '';
+                            
+                            // Display the actual features
+                            Object.entries(data.features).forEach(([feature, value]) => {
+                                const row = document.createElement('tr');
+                                const badgeClass = value !== 0 ? 'bg-success' : 'bg-secondary';
+                                row.innerHTML = `
+                                    <td>${feature}</td>
+                                    <td><span class="badge ${badgeClass}">${value.toFixed(2)}</span></td>
+                                `;
+                                tableBody.appendChild(row);
+                            });
+                        }
+                        
+                        // Update the active features count
+                        const flowFeaturesElement = document.getElementById('flow-features');
+                        if (flowFeaturesElement) {
+                            flowFeaturesElement.textContent = data.non_zero_count;
+                        }
+                        
+                        // Update the feature values content message
+                        const featureContent = document.getElementById('feature-values-content');
+                        if (featureContent && data.non_zero_count > 0) {
+                            const message = featureContent.querySelector('p');
+                            if (message) {
+                                message.textContent = `Network flow features are active. ${data.non_zero_count} out of ${data.total_features} features have non-zero values.`;
+                                message.className = 'text-success';
+                            }
+                        }
+                    } else {
+                        console.error('Failed to load network flow features:', data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading network flow features:', error);
+                });
+        }
+        
+        function testNetworkFlow() {
+            showNotification('Testing network flow analysis...', 'info');
+            
+            // Simulate a test request
+            const testData = {
+                url: '/test',
+                method: 'GET',
+                remote_addr: '127.0.0.1'
+            };
+            
+            fetch('/api/network-flow-status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.scapy_available) {
+                        setTimeout(() => {
+                            showNotification('Network flow test completed - Scapy is ready for packet capture', 'success');
+                        }, 2000);
+                    } else {
+                        setTimeout(() => {
+                            showNotification('Network flow test failed - Scapy not available', 'warning');
+                        }, 2000);
+                    }
+                })
+                .catch(error => {
+                    setTimeout(() => {
+                        showNotification('Network flow test failed', 'error');
+                    }, 2000);
+                });
+        }
+        
+        function saveNetworkFlowSettings() {
+            const enabled = document.getElementById('enable-network-flow').checked;
+            const duration = document.getElementById('sniff-duration').value;
+            const interface = document.getElementById('network-interface').value;
+            
+            showNotification('Network flow settings saved', 'success');
+        }
+        
+        function saveRules() {
+            // This function now just refreshes the rules display
+            // Individual rule operations are handled by addRule, editRule, deleteRule
+                    refreshRules();
+            showNotification('Rules refreshed successfully', 'success');
+        }
+        
+        function refreshRules() {
+            fetch('/api/rules')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        showNotification('Error loading rules: ' + data.error, 'error');
+                        return;
+                    }
+                    
+                    // Update rule statistics
+                    document.getElementById('total-rules').textContent = data.total_rules;
+                    document.getElementById('block-rules').textContent = data.block_rules;
+                    document.getElementById('log-rules').textContent = data.log_rules;
+                    document.getElementById('rules-last-modified').textContent = new Date(data.last_modified).toLocaleString();
+                    
+                    // Update rules editor content
+                    const editor = document.getElementById('rules-editor');
+                    editor.innerHTML = `
+                        <div class="alert alert-info mb-3">
+                            <h6>Current Rules (${data.total_rules} total)</h6>
+                            <p class="mb-0">Click on a rule to edit it, or use the "Add New Rule" button to create new ones.</p>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Pattern</th>
+                                        <th>Action</th>
+                                        <th>Description</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                ${data.rules.map(rule => `
+                                        <tr>
+                                            <td><strong>${rule.id}</strong></td>
+                                            <td><code>${rule.pattern}</code></td>
+                                            <td>
+                                        <span class="badge ${rule.action === 'block' ? 'bg-danger' : 'bg-info'}">${rule.action}</span>
+                                            </td>
+                                            <td>${rule.description}</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary me-1" onclick="editRule('${rule.id}', '${rule.pattern}', '${rule.action}', '${rule.description}')">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-danger" onclick="deleteRule('${rule.id}')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                    
+                    showNotification('Rules refreshed successfully', 'success');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Failed to refresh rules', 'error');
+                });
+        }
+        
+        // Enhanced notification system
+        function showNotification(message, type = 'info') {
+            const toast = document.getElementById('notification-toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            // Set message
+            toastMessage.textContent = message;
+            
+            // Set type-specific styling
+            toast.className = 'toast';
+            if (type === 'success') {
+                toast.classList.add('bg-success');
+            } else if (type === 'error') {
+                toast.classList.add('bg-danger');
+            } else if (type === 'warning') {
+                toast.classList.add('bg-warning');
+            } else {
+                toast.classList.add('bg-info');
+            }
+            
+            // Show toast
+            const bsToast = new bootstrap.Toast(toast);
+            bsToast.show();
+        }
+        
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load ML models on page load
+            refreshMLModels();
+            
+            // Load network flow status
+            refreshNetworkFlow();
+            
+            // Load rules
+            refreshRules();
+            
+            // Load blocked IPs
+            refreshBlockedIPs();
+            
+            // Add real-time ML model toggle listener
+            document.getElementById('ml-enabled-switch').addEventListener('change', function() {
+                const mlEnabled = this.checked;
+                const confidenceThreshold = document.getElementById('confidence-threshold-slider').value;
+                
+                const settings = {
+                    ml_model: {
+                        enabled: mlEnabled,
+                        confidence_threshold: parseFloat(confidenceThreshold)
+                    }
+                };
+                
+                fetch('/api/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(settings)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const status = mlEnabled ? 'Active' : 'Disabled';
+                        document.getElementById('ml-status').textContent = status;
+                        showNotification(`ML Model ${status.toLowerCase()}`, 'success');
+                    } else {
+                        showNotification('Error updating ML model status: ' + data.error, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating ML model status:', error);
+                    showNotification('Failed to update ML model status', 'error');
+                });
+            });
+            
+            // Add confidence threshold slider listener
+            document.getElementById('confidence-threshold-slider').addEventListener('input', function() {
+                const value = this.value;
+                document.getElementById('threshold-value1').textContent = value;
+                document.getElementById('threshold-value2').textContent = value;
+                
+                // Auto-save confidence threshold changes immediately
+                const mlEnabled = document.getElementById('ml-enabled-switch').checked;
+                const settings = {
+                    ml_model: {
+                        enabled: mlEnabled,
+                        confidence_threshold: parseFloat(value)
+                    }
+                };
+                
+                fetch('/api/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(settings)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log(`Confidence threshold updated to ${value} in real-time`);
+                        showNotification(`Confidence threshold updated to ${value}`, 'success');
+                    } else {
+                        console.error('Error updating confidence threshold:', data.error);
+                        showNotification('Error updating confidence threshold: ' + data.error, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating confidence threshold:', error);
+                    showNotification('Failed to update confidence threshold', 'error');
+                });
+            });
+            
+            // Load current settings
+            fetch('/api/settings')
+                .then(response => response.json())
+                .then(data => {
+                    // Load ML settings
+                    if (data.ml_model) {
+                        document.getElementById('ml-enabled-switch').checked = data.ml_model.enabled;
+                        document.getElementById('confidence-threshold-slider').value = data.ml_model.confidence_threshold;
+                        document.getElementById('threshold-value').textContent = data.ml_model.confidence_threshold;
+                        document.getElementById('confidence-threshold-display').textContent = data.ml_model.confidence_threshold;
+                    }
+                    
+                    // Load rate limiting settings
+                    if (data.rate_limiting) {
+                        document.getElementById('rate-limiting-enabled').checked = data.rate_limiting.enabled;
+                        document.getElementById('max-requests').value = data.rate_limiting.max_requests;
+                        document.getElementById('window-seconds').value = data.rate_limiting.window_seconds;
+                        document.getElementById('block-time').value = data.rate_limiting.block_time;
+                    }
+                    
+                    // Load plugin settings
+                    if (data.plugins) {
+                        document.getElementById('plugin-block-admin').checked = data.plugins.block_admin;
+                        document.getElementById('plugin-block-ip').checked = data.plugins.block_ip;
+                        document.getElementById('plugin-block-user-agent').checked = data.plugins.block_user_agent;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading settings:', error);
+                });
+        });
+        
+        // Enhanced block IP function
+        function blockIp() {
+            const ip = document.getElementById('block-ip-address').value;
+            const duration = document.getElementById('block-duration').value;
+            const reason = document.getElementById('block-reason').value;
+            
+            if (!ip) {
+                showNotification('Please enter an IP address', 'warning');
+                return;
+            }
+            
+            // Basic IP validation
+            const ipRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+            if (!ipRegex.test(ip)) {
+                showNotification('Please enter a valid IP address', 'warning');
+                return;
+            }
+            
+            const blockData = {
+                ip: ip,
+                duration: parseInt(duration),
+                reason: reason || 'Manually blocked from dashboard'
+            };
+            
+            fetch('/api/block-ip', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(blockData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('blockIpModal'));
+                    modal.hide();
+                    // Clear form
+                    document.getElementById('block-ip-address').value = '';
+                    document.getElementById('block-reason').value = '';
+                    // Refresh blocked IPs list
+                        refreshBlockedIPs();
+                } else {
+                    showNotification('Error: ' + data.error, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Failed to block IP address', 'error');
+            });
+        }
+        
+        // Function to refresh blocked IPs list
+        function refreshBlockedIPs() {
+            fetch('/api/blocked-ips')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        showNotification('Error loading blocked IPs: ' + data.error, 'error');
+                        return;
+                    }
+                    
+                    // Update statistics
+                    const currentlyBlocked = data.filter(ip => ip.status === 'active').length;
+                    const totalBlocked = data.length;
+                    const expiredBlocked = data.filter(ip => ip.status === 'expired').length;
+                    
+                    document.getElementById('currently-blocked-ips').textContent = currentlyBlocked;
+                    document.getElementById('total-blocked-ips').textContent = totalBlocked;
+                    document.getElementById('expired-blocked-ips').textContent = expiredBlocked;
+                    
+                    // Update blocked IPs table
+                    const tableBody = document.getElementById('blocked-ips-table');
+                    if (tableBody) {
+                        tableBody.innerHTML = data.map(ip => `
+                            <tr>
+                                <td>${ip.ip}</td>
+                                <td>${ip.reason || 'N/A'}</td>
+                                <td>${ip.blocked_at ? new Date(ip.blocked_at).toLocaleString() : 'N/A'}</td>
+                                <td>${ip.unblock_time ? new Date(ip.unblock_time).toLocaleString() : 'N/A'}</td>
+                                <td>
+                                    <span class="badge ${ip.status === 'active' ? 'bg-danger' : 'bg-secondary'}">
+                                        ${ip.status === 'active' ? 'Active' : 'Expired'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning" onclick="unblockIp('${ip.ip}')">
+                                        <i class="fas fa-unlock"></i> Unblock
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Failed to load blocked IPs', 'error');
+                });
+        }
+        
+        // Function to unblock an IP
+        function unblockIp(ip) {
+            fetch(`/api/unblock-ip/${ip}`, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('IP unblocked successfully', 'success');
+                    refreshBlockedIPs();
+                } else {
+                    showNotification('Error unblocking IP: ' + data.error, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Failed to unblock IP', 'error');
+            });
+        }
+        
+        // Rule management functions
+        let currentRules = [];
+        let editingRuleId = null;
+        
+        function addNewRule() {
+            editingRuleId = null;
+            document.getElementById('ruleModalTitle').textContent = 'Add New Rule';
+            document.getElementById('ruleForm').reset();
+            const modal = new bootstrap.Modal(document.getElementById('ruleModal'));
+            modal.show();
+        }
+        
+        function editRule(id, pattern, action, description) {
+            editingRuleId = id;
+            document.getElementById('ruleModalTitle').textContent = 'Edit Rule';
+            document.getElementById('rule-id').value = id;
+            document.getElementById('rule-pattern').value = pattern;
+            document.getElementById('rule-action').value = action;
+            document.getElementById('rule-description').value = description;
+            const modal = new bootstrap.Modal(document.getElementById('ruleModal'));
+            modal.show();
+        }
+        
+        function saveRule() {
+            const ruleData = {
+                id: document.getElementById('rule-id').value,
+                pattern: document.getElementById('rule-pattern').value,
+                action: document.getElementById('rule-action').value,
+                description: document.getElementById('rule-description').value,
+                is_edit: editingRuleId !== null
+            };
+            
+            if (!ruleData.id || !ruleData.pattern || !ruleData.description) {
+                showNotification('Please fill in all required fields', 'warning');
+                return;
+            }
+            
+            // Save the rule using the new API endpoint
+            fetch('/api/rule', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(ruleData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification(data.message, 'success');
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('ruleModal'));
+                    modal.hide();
+                    refreshRules();
+                } else {
+                    showNotification('Error saving rule: ' + data.error, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Failed to save rule', 'error');
+            });
+        }
+        
+        function deleteRule(ruleId) {
+            if (confirm(`Are you sure you want to delete rule "${ruleId}"?`)) {
+                fetch(`/api/delete-rule/${ruleId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showNotification('Rule deleted successfully', 'success');
+                        refreshRules();
+                    } else {
+                        showNotification('Error deleting rule: ' + data.error, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Failed to delete rule', 'error');
+                });
+            }
+        }
+    </script>
+</body>
+</html> 

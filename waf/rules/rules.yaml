@@ -1,0 +1,61 @@
+rules:
+- action: block
+  description: SQL Injection - basic SQL keywords
+  id: SQLI-01
+  pattern: (?i)(\%27|'|\-\-|;|\%23|#).*\b(SELECT|INSERT|DELETE|UPDATE|UNION|DROP|WHERE|FROM|HAVING)\b
+- action: block
+  description: SQL Injection using boolean expressions
+  id: SQLI-02
+  pattern: (?i)(\bOR\b|\bAND\b).*(=|>|<|LIKE).*('\w+'|\d+)
+- action: block
+  description: XSS - script tag
+  id: XSS-01
+  pattern: (?i)<script.*?>.*?</script>
+- action: block
+  description: XSS - inline event handlers
+  id: XSS-02
+  pattern: (?i)on\w+=['"].*?['"]
+- action: block
+  description: Remote Code Execution - known binaries
+  id: RCE-01
+  pattern: (?i)(wget|curl|python\s+-c|php\s+-r|nc\s+-e|bash\s+-i)
+- action: block
+  description: Local File Inclusion
+  id: LFI-01
+  pattern: (?i)(\.\./|\%2e\%2e\/|\bfile:\/\/)
+- action: block
+  description: Remote File Inclusion
+  id: RFI-01
+  pattern: (?i)(http:\/\/|https:\/\/).*(\.php|\.txt|\.sh)
+- action: block
+  description: XML External Entity (XXE) attack
+  id: XXE-01
+  pattern: (?i)<!DOCTYPE\s+[^>]+\[.*?(ENTITY|SYSTEM|PUBLIC).*?\]?>
+- action: block
+  description: SSRF - accessing internal services
+  id: SSRF-01
+  pattern: (?i)(http:\/\/127\.0\.0\.1|http:\/\/localhost|169\.254\.169\.254)
+- action: block
+  description: Path Traversal attempt
+  id: PATH-TRAVERSAL-01
+  pattern: (?i)(\.\./|\%2e\%2e\/)
+- action: block
+  description: Insecure Deserialization - known dangerous classes
+  id: INSECURE-DESERIALIZATION-01
+  pattern: (?i)(java\.util\.HashMap|ObjectInputStream|YAML\.load|pickle\.load)
+- action: block
+  description: Broken Authentication - weak credential patterns
+  id: BROKEN-AUTH-01
+  pattern: (?i)(admin|root|password|token)=.{0,10}$
+- action: log
+  description: Potential IDOR - sensitive IDs in URL
+  id: IDOR-01
+  pattern: (?i)(user_id|account_id|profile_id)=\d+
+- action: block
+  description: he
+  id: hh
+  pattern: hhh
+- action: block
+  description: hehe
+  id: '122'
+  pattern: '1234'
