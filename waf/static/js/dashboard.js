@@ -184,14 +184,23 @@ function updateAttackChart(attackReasons) {
     const labels = Object.keys(attackReasons);
     const values = Object.values(attackReasons);
 
-    // Generate a distinct color for each category so all slices are unique
+    // Generate aesthetic colors for dark theme
     function generateDistinctColors(count) {
+        const darkThemeColors = [
+            '#6366f1', // Indigo
+            '#8b5cf6', // Purple
+            '#ec4899', // Pink
+            '#10b981', // Emerald
+            '#f59e0b', // Amber
+            '#ef4444', // Red
+            '#06b6d4', // Cyan
+            '#14b8a6', // Teal
+            '#a855f7', // Violet
+            '#f97316', // Orange
+        ];
         const colors = [];
         for (let i = 0; i < count; i++) {
-            const hue = Math.round((360 / Math.max(count, 1)) * i);
-            const saturation = 70; // keep colors vibrant but readable
-            const lightness = 55;  // balanced lightness for white card background
-            colors.push(`hsl(${hue} ${saturation}% ${lightness}%)`);
+            colors.push(darkThemeColors[i % darkThemeColors.length]);
         }
         return colors;
     }
@@ -212,7 +221,7 @@ function updateAttackChart(attackReasons) {
                 data: values,
                 backgroundColor: generateDistinctColors(labels.length),
                 borderWidth: 2,
-                borderColor: '#fff'
+                borderColor: '#1e2746'
             }]
         },
         options: {
@@ -220,7 +229,10 @@ function updateAttackChart(attackReasons) {
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'bottom'
+                    position: 'bottom',
+                    labels: {
+                        color: '#cbd5e1'
+                    }
                 }
             }
         }
@@ -315,15 +327,15 @@ function displayRequests(requests) {
         const truncatedUserAgent = userAgent.length > 50 ? userAgent.substring(0, 50) + '...' : userAgent;
         
         row.innerHTML = `
-            <td>${formatTime(request.timestamp)}</td>
-            <td><code>${request.remote_addr}</code></td>
-            <td><span class="badge bg-secondary">${request.method}</span></td>
-            <td><code class="code-wrap">${request.path}</code></td>
-            <td title="${userAgent}" class="text-truncate-1" style="max-width: 240px;">${truncatedUserAgent}</td>
+            <td style="color: #cbd5e1 !important;">${formatTime(request.timestamp)}</td>
+            <td><code style="background: rgba(99, 102, 241, 0.2) !important; color: #6366f1 !important; padding: 0.25rem 0.5rem; border-radius: 6px;">${request.remote_addr}</code></td>
+            <td><span class="badge bg-secondary" style="background: rgba(99, 102, 241, 0.2) !important; color: #6366f1 !important;">${request.method}</span></td>
+            <td><code class="code-wrap" style="background: rgba(99, 102, 241, 0.2) !important; color: #6366f1 !important; padding: 0.25rem 0.5rem; border-radius: 6px;">${request.path}</code></td>
+            <td title="${userAgent}" class="text-truncate-1" style="max-width: 240px; color: #cbd5e1 !important;">${truncatedUserAgent}</td>
             <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-            <td>${request.reason || 'N/A'}</td>
+            <td style="color: #cbd5e1 !important;">${request.reason || 'N/A'}</td>
             <td>
-                <button class="btn btn-sm btn-outline-primary" onclick="viewRequestDetails('${request._id}')">
+                <button class="btn btn-sm btn-outline-primary" onclick="viewRequestDetails('${request._id}')" style="border-color: #6366f1 !important; color: #6366f1 !important;">
                     <i class="fas fa-eye"></i>
                 </button>
             </td>
@@ -490,7 +502,7 @@ function displayRules(rules) {
     container.innerHTML = '';
     
     if (rules.length === 0) {
-        container.innerHTML = '<div class="text-center text-muted">No rules found</div>';
+        container.innerHTML = '<div class="text-center text-muted" style="color: #94a3b8 !important;">No rules found</div>';
         return;
     }
     
@@ -500,26 +512,26 @@ function displayRules(rules) {
         
         ruleDiv.innerHTML = `
             <div class="rule-header">
-                <span class="rule-id">${rule.id}</span>
+                <span class="rule-id" style="color: #6366f1 !important;">${rule.id}</span>
                 <span class="rule-action ${rule.action}">${rule.action}</span>
             </div>
             <div class="mb-3">
-                <label class="form-label">Pattern</label>
-                <input type="text" class="form-control rule-pattern" value="${rule.pattern}" data-index="${index}">
-                <div class="form-text">Regular expression pattern to match</div>
+                <label class="form-label" style="color: #cbd5e1 !important;">Pattern</label>
+                <input type="text" class="form-control rule-pattern" value="${rule.pattern}" data-index="${index}" style="background: rgba(30, 39, 70, 0.8) !important; border-color: #2d3748 !important; color: #f8fafc !important;">
+                <div class="form-text" style="color: #94a3b8 !important;">Regular expression pattern to match</div>
             </div>
             <div class="mb-3">
-                <label class="form-label">Description</label>
-                <input type="text" class="form-control rule-description" value="${rule.description}" data-index="${index}">
-                <div class="form-text">Human-readable description of the rule</div>
+                <label class="form-label" style="color: #cbd5e1 !important;">Description</label>
+                <input type="text" class="form-control rule-description" value="${rule.description}" data-index="${index}" style="background: rgba(30, 39, 70, 0.8) !important; border-color: #2d3748 !important; color: #f8fafc !important;">
+                <div class="form-text" style="color: #94a3b8 !important;">Human-readable description of the rule</div>
             </div>
             <div class="mb-3">
-                <label class="form-label">Action</label>
-                <select class="form-select rule-action-select" data-index="${index}">
+                <label class="form-label" style="color: #cbd5e1 !important;">Action</label>
+                <select class="form-select rule-action-select" data-index="${index}" style="background: rgba(30, 39, 70, 0.8) !important; border-color: #2d3748 !important; color: #f8fafc !important;">
                     <option value="block" ${rule.action === 'block' ? 'selected' : ''}>Block</option>
                     <option value="log" ${rule.action === 'log' ? 'selected' : ''}>Log</option>
                 </select>
-                <div class="form-text">Action to take when pattern matches</div>
+                <div class="form-text" style="color: #94a3b8 !important;">Action to take when pattern matches</div>
             </div>
             <button class="btn btn-sm btn-danger" onclick="deleteRule(${index})">
                 <i class="fas fa-trash"></i> Delete
@@ -854,15 +866,15 @@ function updateAnalyticsChart(dailyStats) {
                 {
                     label: 'Allowed Requests',
                     data: allowedData,
-                    borderColor: '#1cc88a',
-                    backgroundColor: 'rgba(28, 200, 138, 0.1)',
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.2)',
                     tension: 0.4
                 },
                 {
                     label: 'Blocked Requests',
                     data: blockedData,
-                    borderColor: '#e74a3b',
-                    backgroundColor: 'rgba(231, 74, 59, 0.1)',
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.2)',
                     tension: 0.4
                 }
             ]
@@ -874,18 +886,30 @@ function updateAnalyticsChart(dailyStats) {
             scales: {
                 y: {
                     beginAtZero: true,
-                    title: { display: true, text: 'Number of requests' }
+                    title: { display: true, text: 'Number of requests', color: '#cbd5e1' },
+                    ticks: { color: '#94a3b8' },
+                    grid: { color: 'rgba(148, 163, 184, 0.1)' }
                 },
                 x: {
-                    title: { display: true, text: 'Date' }
+                    title: { display: true, text: 'Date', color: '#cbd5e1' },
+                    ticks: { color: '#94a3b8' },
+                    grid: { color: 'rgba(148, 163, 184, 0.1)' }
                 }
             },
             plugins: {
                 legend: {
-                    position: 'top'
+                    position: 'top',
+                    labels: { color: '#cbd5e1' }
                 },
-                title: { display: true, text: 'Daily traffic: allowed vs blocked' },
-                tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.formattedValue}` } }
+                title: { display: true, text: 'Daily traffic: allowed vs blocked', color: '#cbd5e1' },
+                tooltip: { 
+                    backgroundColor: 'rgba(30, 39, 70, 0.95)',
+                    titleColor: '#f8fafc',
+                    bodyColor: '#cbd5e1',
+                    borderColor: '#6366f1',
+                    borderWidth: 1,
+                    callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.formattedValue}` } 
+                }
             }
         }
     });
@@ -898,14 +922,15 @@ function updateMLTypesChart(items) {
     const labels = items.map(i => i._id || 'unknown');
     const values = items.map(i => i.count || 0);
     if (mlTypesChart) mlTypesChart.destroy();
-    // Generate a distinct color for each bar
+    // Generate aesthetic colors for dark theme
     function generateDistinctColors(count) {
+        const darkThemeColors = [
+            '#6366f1', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b',
+            '#ef4444', '#06b6d4', '#14b8a6', '#a855f7', '#f97316'
+        ];
         const colors = [];
         for (let i = 0; i < count; i++) {
-            const hue = Math.round((360 / Math.max(count, 1)) * i);
-            const saturation = 70;
-            const lightness = 55;
-            colors.push(`hsl(${hue} ${saturation}% ${lightness}%)`);
+            colors.push(darkThemeColors[i % darkThemeColors.length]);
         }
         return colors;
     }
@@ -928,11 +953,27 @@ function updateMLTypesChart(items) {
             layout: { padding: { bottom: 40 } },
             plugins: { 
                 legend: { display: false },
-                title: { display: true, text: 'Most common ML-detected attack types' }
+                title: { display: true, text: 'Most common ML-detected attack types', color: '#cbd5e1' },
+                tooltip: {
+                    backgroundColor: 'rgba(30, 39, 70, 0.95)',
+                    titleColor: '#f8fafc',
+                    bodyColor: '#cbd5e1',
+                    borderColor: '#6366f1',
+                    borderWidth: 1
+                }
             },
             scales: { 
-                y: { beginAtZero: true, title: { display: true, text: 'Blocked requests' } },
-                x: { title: { display: true, text: 'Attack type' }, ticks: { maxRotation: 30, minRotation: 0 } }
+                y: { 
+                    beginAtZero: true, 
+                    title: { display: true, text: 'Blocked requests', color: '#cbd5e1' },
+                    ticks: { color: '#94a3b8' },
+                    grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                },
+                x: { 
+                    title: { display: true, text: 'Attack type', color: '#cbd5e1' }, 
+                    ticks: { maxRotation: 30, minRotation: 0, color: '#94a3b8' },
+                    grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                }
             }
         }
     });
@@ -952,7 +993,7 @@ function updateRuleBlocksChart(items) {
             datasets: [{
                 label: 'Rule-based blocks',
                 data: values,
-                backgroundColor: '#e74a3b',
+                backgroundColor: '#ef4444',
                 borderRadius: 6,
                 borderSkipped: false
             }]
@@ -965,11 +1006,27 @@ function updateRuleBlocksChart(items) {
             },
             plugins: { 
                 legend: { display: false },
-                title: { display: true, text: 'Top rules that blocked requests' }
+                title: { display: true, text: 'Top rules that blocked requests', color: '#cbd5e1' },
+                tooltip: {
+                    backgroundColor: 'rgba(30, 39, 70, 0.95)',
+                    titleColor: '#f8fafc',
+                    bodyColor: '#cbd5e1',
+                    borderColor: '#6366f1',
+                    borderWidth: 1
+                }
             },
             scales: { 
-                y: { beginAtZero: true, title: { display: true, text: 'Blocked requests' } },
-                x: { title: { display: true, text: 'Rule ID' }, ticks: { maxRotation: 30, minRotation: 0 } }
+                y: { 
+                    beginAtZero: true, 
+                    title: { display: true, text: 'Blocked requests', color: '#cbd5e1' },
+                    ticks: { color: '#94a3b8' },
+                    grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                },
+                x: { 
+                    title: { display: true, text: 'Rule ID', color: '#cbd5e1' }, 
+                    ticks: { maxRotation: 30, minRotation: 0, color: '#94a3b8' },
+                    grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                }
             }
         }
     });
@@ -991,7 +1048,7 @@ function updatePluginBlocksChart(items) {
             datasets: [{
                 label: 'Plugin-based blocks',
                 data: values,
-                backgroundColor: '#858796',
+                backgroundColor: '#6366f1',
                 borderRadius: 6,
                 borderSkipped: false
             }]
@@ -1002,11 +1059,27 @@ function updatePluginBlocksChart(items) {
             layout: { padding: { bottom: 32 } },
             plugins: { 
                 legend: { display: false },
-                title: { display: true, text: 'Top plugins that blocked requests' }
+                title: { display: true, text: 'Top plugins that blocked requests', color: '#cbd5e1' },
+                tooltip: {
+                    backgroundColor: 'rgba(30, 39, 70, 0.95)',
+                    titleColor: '#f8fafc',
+                    bodyColor: '#cbd5e1',
+                    borderColor: '#6366f1',
+                    borderWidth: 1
+                }
             },
             scales: { 
-                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, title: { display: true, text: 'Blocked requests' } },
-                x: { title: { display: true, text: 'Plugin' } }
+                y: { 
+                    beginAtZero: true, 
+                    grid: { color: 'rgba(148, 163, 184, 0.1)' }, 
+                    title: { display: true, text: 'Blocked requests', color: '#cbd5e1' },
+                    ticks: { color: '#94a3b8' }
+                },
+                x: { 
+                    title: { display: true, text: 'Plugin', color: '#cbd5e1' },
+                    ticks: { color: '#94a3b8' },
+                    grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                }
             }
         }
     });
@@ -1026,7 +1099,7 @@ function updateLayerComparisonChart(layerComparison) {
             datasets: [{
                 label: 'Blocked requests by layer',
                 data: values,
-                backgroundColor: ['#36b9cc', '#1cc88a', '#858796'],
+                backgroundColor: ['#06b6d4', '#10b981', '#6366f1'],
                 borderRadius: 6,
                 borderSkipped: false
             }]
@@ -1037,11 +1110,27 @@ function updateLayerComparisonChart(layerComparison) {
             layout: { padding: { bottom: 24 } },
             plugins: { 
                 legend: { display: false },
-                title: { display: true, text: 'Comparison of blocked requests by layer' }
+                title: { display: true, text: 'Comparison of blocked requests by layer', color: '#cbd5e1' },
+                tooltip: {
+                    backgroundColor: 'rgba(30, 39, 70, 0.95)',
+                    titleColor: '#f8fafc',
+                    bodyColor: '#cbd5e1',
+                    borderColor: '#6366f1',
+                    borderWidth: 1
+                }
             },
             scales: { 
-                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, title: { display: true, text: 'Blocked requests' } },
-                x: { title: { display: true, text: 'Layer' } }
+                y: { 
+                    beginAtZero: true, 
+                    grid: { color: 'rgba(148, 163, 184, 0.1)' }, 
+                    title: { display: true, text: 'Blocked requests', color: '#cbd5e1' },
+                    ticks: { color: '#94a3b8' }
+                },
+                x: { 
+                    title: { display: true, text: 'Layer', color: '#cbd5e1' },
+                    ticks: { color: '#94a3b8' },
+                    grid: { color: 'rgba(148, 163, 184, 0.1)' }
+                }
             }
         }
     });
@@ -1060,8 +1149,8 @@ function updateLayerPieChart(layerComparison) {
             labels,
             datasets: [{
                 data: values,
-                backgroundColor: ['#36b9cc', '#1cc88a', '#858796'],
-                borderColor: '#ffffff',
+                backgroundColor: ['#06b6d4', '#10b981', '#6366f1'],
+                borderColor: '#1e2746',
                 borderWidth: 2
             }]
         },
@@ -1070,8 +1159,18 @@ function updateLayerPieChart(layerComparison) {
             maintainAspectRatio: false,
             layout: { padding: { bottom: 16 } },
             plugins: {
-                legend: { position: 'bottom' },
-                tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.formattedValue}` } }
+                legend: { 
+                    position: 'bottom',
+                    labels: { color: '#cbd5e1' }
+                },
+                tooltip: { 
+                    backgroundColor: 'rgba(30, 39, 70, 0.95)',
+                    titleColor: '#f8fafc',
+                    bodyColor: '#cbd5e1',
+                    borderColor: '#6366f1',
+                    borderWidth: 1,
+                    callbacks: { label: (ctx) => `${ctx.label}: ${ctx.formattedValue}` } 
+                }
             },
             cutout: '60%'
         }

@@ -17,8 +17,5 @@
   "rules": {
     "enabled": true,
     "auto_update": false
-  },
-  "network_flow": {
-    "enabled": true
   }
 }

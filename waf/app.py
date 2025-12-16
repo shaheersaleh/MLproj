@@ -11,8 +11,6 @@ mongo_logger = MongoLogger()
 from ml_model.waf_text.predictor import WafPredictor
 import time
 
-flow_stats = {}
-
 rule_engine = RuleEngine("rules.yaml")
 app = Flask(__name__)
 MAX_REQUESTS = 2000      # requests
