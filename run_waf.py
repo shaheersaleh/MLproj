@@ -20,6 +20,11 @@ def run_dashboard():
     print("Starting WAF Dashboard on port 5001...")
     subprocess.run([sys.executable, "waf/dashboard.py"])
 
+def run_backend():
+    """Run the backend application on port 8000"""
+    print("Starting Backend App on port 8000...")
+    subprocess.run([sys.executable, "backend_app/app.py"])
+
 def main():
     print("🚀 Starting WAF System...")
     print("=" * 50)
@@ -30,11 +35,14 @@ def main():
         print("   Current directory:", os.getcwd())
         sys.exit(1)
     
-    # Start both services in separate threads
+    # Start all services in separate threads
     waf_thread = Thread(target=run_waf, daemon=True)
     dashboard_thread = Thread(target=run_dashboard, daemon=True)
+    backend_thread = Thread(target=run_backend, daemon=True)
     
     try:
+        backend_thread.start()
+        time.sleep(2)  # Give backend a moment to start
         waf_thread.start()
         time.sleep(2)  # Give WAF a moment to start
         dashboard_thread.start()
@@ -42,6 +50,7 @@ def main():
         print("✅ WAF System started successfully!")
         print("📊 Dashboard: http://localhost:5001")
         print("🔒 WAF Proxy: http://localhost:5000")
+        print("🔙 Backend: http://localhost:8000")
         print("=" * 50)
         print("Press Ctrl+C to stop all services")
         
