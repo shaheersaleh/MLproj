@@ -21,21 +21,21 @@ let currentFilters = {
 };
 
 // Initialize dashboard
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     initializeSocket();
     loadSettings();
     loadRules();
     loadMLModels();
     loadBlockedIPs();
     loadAnalytics();
-
+    
     // Set up event listeners
     setupEventListeners();
-
+    
     // Initial load
     refreshStats();
     loadRequests();
-
+    
     // Auto-refresh every 30 seconds only when socket is not connected (fallback)
     setInterval(() => {
         if (!isSocketConnected) {
@@ -53,20 +53,20 @@ function initializeSocket() {
         reconnectionAttempts: Infinity,
         reconnectionDelay: 1000
     });
-
-    socket.on('connect', function () {
+    
+    socket.on('connect', function() {
         isSocketConnected = true;
         updateConnectionStatus(true);
         showNotification('Connected to WAF Dashboard', 'success');
     });
-
-    socket.on('disconnect', function () {
+    
+    socket.on('disconnect', function() {
         isSocketConnected = false;
         updateConnectionStatus(false);
         showNotification('Disconnected from WAF Dashboard', 'warning');
     });
-
-    socket.on('stats_update', function (data) {
+    
+    socket.on('stats_update', function(data) {
         updateDashboardStats(data);
     });
 }
@@ -75,7 +75,7 @@ function initializeSocket() {
 function updateConnectionStatus(connected) {
     const indicator = document.getElementById('status-indicator');
     const icon = indicator.querySelector('i');
-
+    
     if (connected) {
         indicator.textContent = 'Connected';
         indicator.className = 'status-indicator connected';
@@ -91,15 +91,15 @@ function updateConnectionStatus(connected) {
 function setupEventListeners() {
     // Tab navigation
     document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', function (e) {
+        link.addEventListener('click', function(e) {
             e.preventDefault();
-
+            
             // Remove active class from all links
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-
+            
             // Add active class to clicked link
             this.classList.add('active');
-
+            
             // Show corresponding tab
             const target = this.getAttribute('href');
             document.querySelectorAll('.tab-pane').forEach(pane => {
@@ -108,31 +108,31 @@ function setupEventListeners() {
             document.querySelector(target).classList.add('show', 'active');
         });
     });
-
+    
     // ML slider listener (if present)
     const mlSlider = document.getElementById('confidence-threshold-slider');
     const mlValueOut = document.getElementById('threshold-value');
     if (mlSlider && mlValueOut) {
-        mlSlider.addEventListener('input', function () {
+        mlSlider.addEventListener('input', function() {
             mlValueOut.textContent = this.value;
         });
     }
-
+    
     // Blocked only filter
-    document.getElementById('blocked-only').addEventListener('change', function () {
+    document.getElementById('blocked-only').addEventListener('change', function() {
         currentFilters.blocked_only = this.checked;
         currentPage = 1;
         loadRequests();
     });
-
+    
     // Filter inputs
-    document.getElementById('ip-filter').addEventListener('keypress', function (e) {
+    document.getElementById('ip-filter').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             applyFilters();
         }
     });
-
-    document.getElementById('path-filter').addEventListener('keypress', function (e) {
+    
+    document.getElementById('path-filter').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             applyFilters();
         }
@@ -159,7 +159,7 @@ function updateDashboardStats(data) {
     document.getElementById('allowed-requests').textContent = data.allowed_requests;
     document.getElementById('blocked-requests').textContent = data.blocked_requests;
     document.getElementById('block-rate').textContent = data.block_rate.toFixed(1) + '%';
-
+    
     // Update new stat cards
     if (data.blocked_ips_count !== undefined) {
         document.getElementById('currently-blocked-ips').textContent = data.blocked_ips_count;
@@ -170,10 +170,10 @@ function updateDashboardStats(data) {
     if (data.expired_blocked_ips !== undefined) {
         document.getElementById('expired-blocked-ips').textContent = data.expired_blocked_ips;
     }
-
+    
     // Update attack chart
     updateAttackChart(data.attack_reasons);
-
+    
     // Update recent activity
     updateRecentActivity(data.recent_requests);
 }
@@ -187,16 +187,16 @@ function updateAttackChart(attackReasons) {
     // Generate aesthetic colors for dark theme
     function generateDistinctColors(count) {
         const darkThemeColors = [
-            '#14b8a6', // Teal
-            '#0d9488', // Dark Teal
+            '#6366f1', // Indigo
+            '#8b5cf6', // Purple
+            '#ec4899', // Pink
             '#10b981', // Emerald
-            '#059669', // Green
-            '#06b6d4', // Cyan
-            '#0891b2', // Dark Cyan
-            '#3b82f6', // Blue
             '#f59e0b', // Amber
             '#ef4444', // Red
-            '#ec4899', // Pink
+            '#06b6d4', // Cyan
+            '#14b8a6', // Teal
+            '#a855f7', // Violet
+            '#f97316', // Orange
         ];
         const colors = [];
         for (let i = 0; i < count; i++) {
@@ -250,10 +250,10 @@ function updateRecentActivity(requests) {
     sorted.slice(0, 3).forEach(request => {
         const item = document.createElement('div');
         item.className = 'activity-item fade-in';
-
+        
         const iconClass = request.blocked ? 'danger' : 'success';
         const icon = request.blocked ? 'fa-ban' : 'fa-check';
-
+        
         item.innerHTML = `
             <div class="activity-icon ${iconClass}">
                 <i class="fas ${icon}"></i>
@@ -264,7 +264,7 @@ function updateRecentActivity(requests) {
                 <div class="activity-time">${formatTime(request.timestamp)}</div>
             </div>
         `;
-
+        
         container.appendChild(item);
     });
 }
@@ -278,7 +278,7 @@ function loadRequests() {
     url.searchParams.set('ip', currentFilters.ip);
     url.searchParams.set('method', currentFilters.method);
     url.searchParams.set('path', currentFilters.path);
-
+    
     fetch(url)
         .then(response => response.json())
         .then(data => {
@@ -306,61 +306,41 @@ function refreshRequests() {
 }
 
 // Display requests in table
-// Display requests in table
 function displayRequests(requests) {
     const tbody = document.getElementById('requests-table');
     tbody.innerHTML = '';
-
+    
     if (requests.length === 0) {
         const row = document.createElement('tr');
-        row.innerHTML = '<td colspan="8" class="text-center text-muted p-4">No requests found</td>';
+        row.innerHTML = '<td colspan="8" class="text-center text-muted">No requests found</td>';
         tbody.appendChild(row);
         return;
     }
-
+    
     requests.forEach(request => {
         const row = document.createElement('tr');
         const statusClass = request.blocked ? 'blocked' : 'allowed';
         const statusText = request.blocked ? 'Blocked' : 'Allowed';
-
+        
         // Truncate user agent if too long
         const userAgent = request.user_agent || 'N/A';
         const truncatedUserAgent = userAgent.length > 50 ? userAgent.substring(0, 50) + '...' : userAgent;
-
-        // Escape content
-        const safePath = request.path.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        const safeReason = (request.reason || 'N/A').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
+        
         row.innerHTML = `
-            <td class="text-nowrap">${formatTime(request.timestamp)}</td>
+            <td style="color: #cbd5e1 !important;">${formatTime(request.timestamp)}</td>
+            <td><code style="background: rgba(99, 102, 241, 0.2) !important; color: #6366f1 !important; padding: 0.25rem 0.5rem; border-radius: 6px;">${request.remote_addr}</code></td>
+            <td><span class="badge bg-secondary" style="background: rgba(99, 102, 241, 0.2) !important; color: #6366f1 !important;">${request.method}</span></td>
+            <td><code class="code-wrap" style="background: rgba(99, 102, 241, 0.2) !important; color: #6366f1 !important; padding: 0.25rem 0.5rem; border-radius: 6px;">${request.path}</code></td>
+            <td title="${userAgent}" class="text-truncate-1" style="max-width: 240px; color: #cbd5e1 !important;">${truncatedUserAgent}</td>
+            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+            <td style="color: #cbd5e1 !important;">${request.reason || 'N/A'}</td>
             <td>
-                <span class="font-monospace" style="color: var(--accent-primary);">${request.remote_addr}</span>
-            </td>
-            <td>
-                <span class="badge" style="background: rgba(20, 184, 166, 0.1); color: var(--accent-primary); border: 1px solid rgba(20, 184, 166, 0.2);">
-                    ${request.method}
-                </span>
-            </td>
-            <td class="text-break">
-                <code style="color: #2dd4bf; background: transparent;">${safePath}</code>
-            </td>
-            <td title="${userAgent.replace(/"/g, '&quot;')}" class="text-muted text-truncate" style="max-width: 200px;">
-                ${truncatedUserAgent}
-            </td>
-            <td>
-                <span class="badge ${request.blocked ? 'bg-danger-subtle text-danger' : 'bg-success-subtle text-success'}" 
-                      style="${request.blocked ? 'background: rgba(239, 68, 68, 0.1); color: #ef4444;' : 'background: rgba(16, 185, 129, 0.1); color: #10b981;'}">
-                    ${statusText}
-                </span>
-            </td>
-            <td class="text-muted small">${safeReason}</td>
-            <td>
-                <button class="btn btn-action-edit" onclick="viewRequestDetails('${request._id}')" title="View Details">
+                <button class="btn btn-sm btn-outline-primary" onclick="viewRequestDetails('${request._id}')" style="border-color: #6366f1 !important; color: #6366f1 !important;">
                     <i class="fas fa-eye"></i>
                 </button>
             </td>
         `;
-
+        
         tbody.appendChild(row);
     });
 }
@@ -369,20 +349,20 @@ function displayRequests(requests) {
 function displayPagination(data) {
     const pagination = document.getElementById('requests-pagination');
     pagination.innerHTML = '';
-
+    
     const totalPages = data.pages;
     const currentPageNum = data.page;
-
+    
     if (totalPages <= 1) {
         return;
     }
-
+    
     // Previous button
     const prevLi = document.createElement('li');
     prevLi.className = `page-item ${currentPageNum === 1 ? 'disabled' : ''}`;
     prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPageNum - 1})">Previous</a>`;
     pagination.appendChild(prevLi);
-
+    
     // Page numbers
     for (let i = 1; i <= totalPages; i++) {
         if (i === 1 || i === totalPages || (i >= currentPageNum - 2 && i <= currentPageNum + 2)) {
@@ -397,7 +377,7 @@ function displayPagination(data) {
             pagination.appendChild(li);
         }
     }
-
+    
     // Next button
     const nextLi = document.createElement('li');
     nextLi.className = `page-item ${currentPageNum === totalPages ? 'disabled' : ''}`;
@@ -432,7 +412,7 @@ function populateSettingsForm(settings) {
     document.getElementById('max-requests').value = settings.rate_limiting.max_requests;
     document.getElementById('window-seconds').value = settings.rate_limiting.window_seconds;
     document.getElementById('block-time').value = settings.rate_limiting.block_time;
-
+    
     // ML model (prefer ML Models tab ids if available)
     const mlEnabledEl = document.getElementById('ml-enabled-switch') || document.getElementById('ml-enabled');
     const mlThresholdEl = document.getElementById('confidence-threshold-slider') || document.getElementById('confidence-threshold');
@@ -440,7 +420,7 @@ function populateSettingsForm(settings) {
     if (mlEnabledEl) mlEnabledEl.checked = settings.ml_model.enabled;
     if (mlThresholdEl) mlThresholdEl.value = settings.ml_model.confidence_threshold;
     if (mlThresholdOutEl) mlThresholdOutEl.textContent = settings.ml_model.confidence_threshold;
-
+    
     // Plugins
     document.getElementById('plugin-block-admin').checked = settings.plugins.block_admin;
     document.getElementById('plugin-block-ip').checked = settings.plugins.block_ip;
@@ -466,7 +446,7 @@ function saveSettings() {
             block_user_agent: document.getElementById('plugin-block-user-agent').checked
         }
     };
-
+    
     fetch('/api/settings', {
         method: 'POST',
         headers: {
@@ -474,19 +454,19 @@ function saveSettings() {
         },
         body: JSON.stringify(settings)
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showNotification('Settings saved successfully', 'success');
-                currentSettings = settings;
-            } else {
-                showNotification('Error saving settings', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error saving settings:', error);
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification('Settings saved successfully', 'success');
+            currentSettings = settings;
+        } else {
             showNotification('Error saving settings', 'error');
-        });
+        }
+    })
+    .catch(error => {
+        console.error('Error saving settings:', error);
+        showNotification('Error saving settings', 'error');
+    });
 }
 
 // Load rules
@@ -517,95 +497,103 @@ function updateRulesStats(data) {
 }
 
 // Display rules
-// Display rules
 function displayRules(rules) {
     const container = document.getElementById('rules-editor');
-
+    container.innerHTML = '';
+    
     if (rules.length === 0) {
-        container.innerHTML = '<div class="text-center text-muted p-4">No rules found</div>';
+        container.innerHTML = '<div class="text-center text-muted" style="color: #94a3b8 !important;">No rules found</div>';
         return;
     }
-
-    let html = `
-    <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead>
-                <tr>
-                    <th style="width: 15%">ID</th>
-                    <th style="width: 30%">Pattern</th>
-                    <th style="width: 10%">Action</th>
-                    <th style="width: 30%">Description</th>
-                    <th style="width: 15%">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
-
-    rules.forEach((rule) => {
-        // Safe escaping for pattern to prevent HTML issues
-        const patternDisplay = rule.pattern.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
-        html += `
-            <tr>
-                <td><strong style="color: var(--accent-primary);">${rule.id}</strong></td>
-                <td>
-                    <code style="background: rgba(20, 184, 166, 0.1); color: var(--accent-primary); padding: 0.25rem 0.5rem; border-radius: 4px; display: inline-block; word-break: break-all;">
-                        ${patternDisplay}
-                    </code>
-                </td>
-                <td>
-                    <span class="badge ${rule.action === 'block' ? 'bg-danger-subtle text-danger' : 'bg-info-subtle text-info'}" 
-                          style="${rule.action === 'block' ? 'background: rgba(239, 68, 68, 0.1); color: #ef4444;' : 'background: rgba(20, 184, 166, 0.1); color: #14b8a6;'}">
-                        ${rule.action.toUpperCase()}
-                    </span>
-                </td>
-                <td class="text-muted">${rule.description}</td>
-                <td>
-                    <button class="btn btn-action-edit me-2" onclick="editRule('${rule.id}', '${rule.pattern.replace(/'/g, "\\'")}', '${rule.action}', '${rule.description.replace(/'/g, "\\'")}')" title="Edit">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-action-delete" onclick="deleteRule('${rule.id}')" title="Delete">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
+    
+    rules.forEach((rule, index) => {
+        const ruleDiv = document.createElement('div');
+        ruleDiv.className = 'rule-item';
+        
+        ruleDiv.innerHTML = `
+            <div class="rule-header">
+                <span class="rule-id" style="color: #6366f1 !important;">${rule.id}</span>
+                <span class="rule-action ${rule.action}">${rule.action}</span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" style="color: #cbd5e1 !important;">Pattern</label>
+                <input type="text" class="form-control rule-pattern" value="${rule.pattern}" data-index="${index}" style="background: rgba(30, 39, 70, 0.8) !important; border-color: #2d3748 !important; color: #f8fafc !important;">
+                <div class="form-text" style="color: #94a3b8 !important;">Regular expression pattern to match</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" style="color: #cbd5e1 !important;">Description</label>
+                <input type="text" class="form-control rule-description" value="${rule.description}" data-index="${index}" style="background: rgba(30, 39, 70, 0.8) !important; border-color: #2d3748 !important; color: #f8fafc !important;">
+                <div class="form-text" style="color: #94a3b8 !important;">Human-readable description of the rule</div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" style="color: #cbd5e1 !important;">Action</label>
+                <select class="form-select rule-action-select" data-index="${index}" style="background: rgba(30, 39, 70, 0.8) !important; border-color: #2d3748 !important; color: #f8fafc !important;">
+                    <option value="block" ${rule.action === 'block' ? 'selected' : ''}>Block</option>
+                    <option value="log" ${rule.action === 'log' ? 'selected' : ''}>Log</option>
+                </select>
+                <div class="form-text" style="color: #94a3b8 !important;">Action to take when pattern matches</div>
+            </div>
+            <button class="btn btn-sm btn-danger" onclick="deleteRule(${index})">
+                <i class="fas fa-trash"></i> Delete
+            </button>
         `;
+        
+        container.appendChild(ruleDiv);
     });
-
-    html += `
-            </tbody>
-        </table>
-    </div>
-    <div class="mt-3">
-        <button class="btn btn-primary" onclick="addNewRule()">
-            <i class="fas fa-plus"></i> Add New Rule
-        </button>
-    </div>
-    `;
-
-    container.innerHTML = html;
+    
+    // Add new rule button
+    const addButton = document.createElement('button');
+    addButton.className = 'btn btn-success mt-3';
+    addButton.innerHTML = '<i class="fas fa-plus"></i> Add New Rule';
+    addButton.onclick = addNewRule;
+    container.appendChild(addButton);
 }
 
-// Add new rule - Opens Modal properly instead of appending row
+// Add new rule
 function addNewRule() {
-    // Reset form
-    document.getElementById('ruleForm').reset();
-    document.getElementById('rule-id').value = '';
-    document.getElementById('rule-id').removeAttribute('readonly');
-
-    // Set title
-    document.getElementById('ruleModalTitle').textContent = 'Add New Rule';
-
-    // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('ruleModal'));
-    modal.show();
+    const container = document.getElementById('rules-editor');
+    const ruleItems = container.querySelectorAll('.rule-item');
+    const index = ruleItems.length;
+    
+    const ruleDiv = document.createElement('div');
+    ruleDiv.className = 'rule-item';
+    
+    ruleDiv.innerHTML = `
+        <div class="rule-header">
+            <span class="rule-id">NEW-RULE-${index + 1}</span>
+            <span class="rule-action block">block</span>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Pattern</label>
+            <input type="text" class="form-control rule-pattern" value="" data-index="${index}">
+            <div class="form-text">Regular expression pattern to match</div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <input type="text" class="form-control rule-description" value="" data-index="${index}">
+            <div class="form-text">Human-readable description of the rule</div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Action</label>
+            <select class="form-select rule-action-select" data-index="${index}">
+                <option value="block" selected>Block</option>
+                <option value="log">Log</option>
+            </select>
+            <div class="form-text">Action to take when pattern matches</div>
+        </div>
+        <button class="btn btn-sm btn-danger" onclick="deleteRule(${index})">
+            <i class="fas fa-trash"></i> Delete
+        </button>
+    `;
+    
+    container.insertBefore(ruleDiv, container.lastElementChild);
 }
 
 // Delete rule
 function deleteRule(index) {
     const container = document.getElementById('rules-editor');
     const rules = container.querySelectorAll('.rule-item');
-
+    
     if (rules[index]) {
         rules[index].remove();
     }
@@ -616,12 +604,12 @@ function saveRules() {
     const container = document.getElementById('rules-editor');
     const ruleItems = container.querySelectorAll('.rule-item');
     const rules = [];
-
+    
     ruleItems.forEach((item, index) => {
         const pattern = item.querySelector('.rule-pattern').value;
         const description = item.querySelector('.rule-description').value;
         const action = item.querySelector('.rule-action-select').value;
-
+        
         if (pattern && description) {
             rules.push({
                 id: `RULE-${index + 1}`,
@@ -631,7 +619,7 @@ function saveRules() {
             });
         }
     });
-
+    
     fetch('/api/rules', {
         method: 'POST',
         headers: {
@@ -639,19 +627,19 @@ function saveRules() {
         },
         body: JSON.stringify({ rules: rules })
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showNotification(data.message, 'success');
-                loadRules(); // Refresh rules display
-            } else {
-                showNotification(data.error, 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error saving rules:', error);
-            showNotification('Error saving rules', 'error');
-        });
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(data.message, 'success');
+            loadRules(); // Refresh rules display
+        } else {
+            showNotification(data.error, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error saving rules:', error);
+        showNotification('Error saving rules', 'error');
+    });
 }
 
 // Load blocked IPs
@@ -671,55 +659,48 @@ function loadBlockedIPs() {
 function displayBlockedIPs(ips) {
     const tbody = document.getElementById('blocked-ips-table');
     tbody.innerHTML = '';
-
+    
     if (ips.length === 0) {
         const row = document.createElement('tr');
         row.innerHTML = '<td colspan="8" class="text-center text-muted">No IPs currently blocked</td>';
         tbody.appendChild(row);
         return;
     }
-
+    
     ips.forEach(ip => {
         const row = document.createElement('tr');
-
+        
         // Format remaining time
         const remainingTime = formatRemainingTime(ip.remaining_time);
-
+        
         // Format recent activity
         const recentActivity = formatRecentActivity(ip.recent_activity);
-
+        
         // Determine status badge class
-        const statusClass = ip.status === 'active' ? 'bg-danger-subtle text-danger' : 'bg-secondary-subtle text-secondary';
-        const statusStyle = ip.status === 'active' ? 'background: rgba(239, 68, 68, 0.1); color: #ef4444;' : 'background: rgba(148, 163, 184, 0.1); color: #94a3b8;';
+        const statusClass = ip.status === 'active' ? 'bg-danger' : 'bg-secondary';
         const statusText = ip.status === 'active' ? 'Active' : 'Expired';
-
+        
         // Determine remaining time display
         const remainingTimeDisplay = ip.status === 'active' ? remainingTime : 'Expired';
-        const remainingTimeStyle = ip.status === 'active' ? 'background: rgba(245, 158, 11, 0.1); color: #f59e0b;' : 'background: rgba(148, 163, 184, 0.1); color: #94a3b8;';
-
+        const remainingTimeClass = ip.status === 'active' ? 'bg-warning' : 'bg-secondary';
+        
         row.innerHTML = `
-            <td>
-                <span class="font-monospace" style="color: var(--accent-primary);">${ip.ip}</span>
-            </td>
-            <td>
-                <span class="badge" style="${statusStyle}">${statusText}</span>
-            </td>
-            <td class="text-nowrap">${formatTime(ip.unblock_time)}</td>
-            <td>
-                <span class="badge" style="${remainingTimeStyle}">${remainingTimeDisplay}</span>
-            </td>
+            <td><code>${ip.ip}</code></td>
+            <td><span class="badge ${statusClass}">${statusText}</span></td>
+            <td>${formatTime(ip.unblock_time)}</td>
+            <td><span class="badge ${remainingTimeClass}">${remainingTimeDisplay}</span></td>
             <td>${ip.total_requests}</td>
             <td><span class="badge bg-danger">${ip.blocked_requests}</span></td>
             <td>${recentActivity}</td>
             <td>
-                ${ip.status === 'active' ?
-                `<button class="btn btn-action-delete" style="border-color: #10b981; color: #10b981;" onclick="unblockIp('${ip.ip}')" title="Unblock">
-                        <i class="fas fa-unlock"></i>
-                    </button>` :
-                `<button class="btn btn-action-delete" onclick="removeExpiredIp('${ip.ip}')" title="Remove">
-                        <i class="fas fa-trash"></i>
+                ${ip.status === 'active' ? 
+                    `<button class="btn btn-sm btn-success" onclick="unblockIp('${ip.ip}')">
+                        <i class="fas fa-unlock"></i> Unblock
+                    </button>` : 
+                    `<button class="btn btn-sm btn-warning" onclick="removeExpiredIp('${ip.ip}')">
+                        <i class="fas fa-trash"></i> Remove
                     </button>`
-            }
+                }
             </td>
         `;
         tbody.appendChild(row);
@@ -729,10 +710,10 @@ function displayBlockedIPs(ips) {
 // Format remaining time
 function formatRemainingTime(seconds) {
     if (seconds <= 0) return 'Expired';
-
+    
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
-
+    
     if (hours > 0) {
         return `${hours}h ${minutes}m`;
     } else {
@@ -743,10 +724,10 @@ function formatRemainingTime(seconds) {
 // Format recent activity
 function formatRecentActivity(activity) {
     if (!activity || activity.length === 0) return 'No recent activity';
-
+    
     const blockedCount = activity.filter(a => a.blocked).length;
     const totalCount = activity.length;
-
+    
     return `${blockedCount}/${totalCount} blocked`;
 }
 
@@ -755,42 +736,42 @@ function blockIp() {
     const ip = document.getElementById('block-ip-address').value;
     const duration = parseInt(document.getElementById('block-duration').value);
     const reason = document.getElementById('block-reason').value || 'Manually blocked';
-
+    
     if (!ip) {
         showNotification('Please enter an IP address', 'error');
         return;
     }
-
+    
     fetch('/api/block-ip', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            ip: ip,
+        body: JSON.stringify({ 
+            ip: ip, 
             duration: duration,
             reason: reason
         })
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                showNotification(data.message, 'success');
-                document.getElementById('block-ip-address').value = '';
-                document.getElementById('block-reason').value = '';
-                loadBlockedIPs();
-
-                // Close modal
-                const modal = bootstrap.Modal.getInstance(document.getElementById('blockIpModal'));
-                modal.hide();
-            } else {
-                showNotification(data.error, 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error blocking IP:', error);
-            showNotification('Error blocking IP', 'error');
-        });
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showNotification(data.message, 'success');
+            document.getElementById('block-ip-address').value = '';
+            document.getElementById('block-reason').value = '';
+            loadBlockedIPs();
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('blockIpModal'));
+            modal.hide();
+        } else {
+            showNotification(data.error, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error blocking IP:', error);
+        showNotification('Error blocking IP', 'error');
+    });
 }
 
 // Unblock IP
@@ -799,19 +780,19 @@ function unblockIp(ip) {
         fetch(`/api/unblock-ip/${ip}`, {
             method: 'POST'
         })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showNotification(data.message, 'success');
-                    loadBlockedIPs();
-                } else {
-                    showNotification(data.error, 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error unblocking IP:', error);
-                showNotification('Error unblocking IP', 'error');
-            });
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification(data.message, 'success');
+                loadBlockedIPs();
+            } else {
+                showNotification(data.error, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error unblocking IP:', error);
+            showNotification('Error unblocking IP', 'error');
+        });
     }
 }
 
@@ -821,19 +802,19 @@ function removeExpiredIp(ip) {
         fetch(`/api/remove-expired-ip/${ip}`, {
             method: 'POST'
         })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showNotification(data.message, 'success');
-                    loadBlockedIPs();
-                } else {
-                    showNotification(data.error, 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error removing expired IP:', error);
-                showNotification('Error removing expired IP', 'error');
-            });
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification(data.message, 'success');
+                loadBlockedIPs();
+            } else {
+                showNotification(data.error, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error removing expired IP:', error);
+            showNotification('Error removing expired IP', 'error');
+        });
     }
 }
 
@@ -868,15 +849,15 @@ function loadAnalytics() {
 // Update analytics chart
 function updateAnalyticsChart(dailyStats) {
     const ctx = document.getElementById('analyticsChart');
-
+    
     if (analyticsChart) {
         analyticsChart.destroy();
     }
-
+    
     const dates = Object.keys(dailyStats).sort();
     const allowedData = dates.map(date => dailyStats[date].allowed || 0);
     const blockedData = dates.map(date => dailyStats[date].blocked || 0);
-
+    
     analyticsChart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -921,13 +902,13 @@ function updateAnalyticsChart(dailyStats) {
                     labels: { color: '#cbd5e1' }
                 },
                 title: { display: true, text: 'Daily traffic: allowed vs blocked', color: '#cbd5e1' },
-                tooltip: {
+                tooltip: { 
                     backgroundColor: 'rgba(30, 39, 70, 0.95)',
                     titleColor: '#f8fafc',
                     bodyColor: '#cbd5e1',
-                    borderColor: '#14b8a6',
+                    borderColor: '#6366f1',
                     borderWidth: 1,
-                    callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.formattedValue}` }
+                    callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.formattedValue}` } 
                 }
             }
         }
@@ -944,7 +925,7 @@ function updateMLTypesChart(items) {
     // Generate aesthetic colors for dark theme
     function generateDistinctColors(count) {
         const darkThemeColors = [
-            '#14b8a6', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b',
+            '#6366f1', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b',
             '#ef4444', '#06b6d4', '#14b8a6', '#a855f7', '#f97316'
         ];
         const colors = [];
@@ -970,26 +951,26 @@ function updateMLTypesChart(items) {
             responsive: true,
             maintainAspectRatio: false,
             layout: { padding: { bottom: 40 } },
-            plugins: {
+            plugins: { 
                 legend: { display: false },
                 title: { display: true, text: 'Most common ML-detected attack types', color: '#cbd5e1' },
                 tooltip: {
                     backgroundColor: 'rgba(30, 39, 70, 0.95)',
                     titleColor: '#f8fafc',
                     bodyColor: '#cbd5e1',
-                    borderColor: '#14b8a6',
+                    borderColor: '#6366f1',
                     borderWidth: 1
                 }
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
+            scales: { 
+                y: { 
+                    beginAtZero: true, 
                     title: { display: true, text: 'Blocked requests', color: '#cbd5e1' },
                     ticks: { color: '#94a3b8' },
                     grid: { color: 'rgba(148, 163, 184, 0.1)' }
                 },
-                x: {
-                    title: { display: true, text: 'Attack type', color: '#cbd5e1' },
+                x: { 
+                    title: { display: true, text: 'Attack type', color: '#cbd5e1' }, 
                     ticks: { maxRotation: 30, minRotation: 0, color: '#94a3b8' },
                     grid: { color: 'rgba(148, 163, 184, 0.1)' }
                 }
@@ -1023,26 +1004,26 @@ function updateRuleBlocksChart(items) {
             layout: {
                 padding: { bottom: 32 }
             },
-            plugins: {
+            plugins: { 
                 legend: { display: false },
                 title: { display: true, text: 'Top rules that blocked requests', color: '#cbd5e1' },
                 tooltip: {
                     backgroundColor: 'rgba(30, 39, 70, 0.95)',
                     titleColor: '#f8fafc',
                     bodyColor: '#cbd5e1',
-                    borderColor: '#14b8a6',
+                    borderColor: '#6366f1',
                     borderWidth: 1
                 }
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
+            scales: { 
+                y: { 
+                    beginAtZero: true, 
                     title: { display: true, text: 'Blocked requests', color: '#cbd5e1' },
                     ticks: { color: '#94a3b8' },
                     grid: { color: 'rgba(148, 163, 184, 0.1)' }
                 },
-                x: {
-                    title: { display: true, text: 'Rule ID', color: '#cbd5e1' },
+                x: { 
+                    title: { display: true, text: 'Rule ID', color: '#cbd5e1' }, 
                     ticks: { maxRotation: 30, minRotation: 0, color: '#94a3b8' },
                     grid: { color: 'rgba(148, 163, 184, 0.1)' }
                 }
@@ -1067,7 +1048,7 @@ function updatePluginBlocksChart(items) {
             datasets: [{
                 label: 'Plugin-based blocks',
                 data: values,
-                backgroundColor: '#14b8a6',
+                backgroundColor: '#6366f1',
                 borderRadius: 6,
                 borderSkipped: false
             }]
@@ -1076,25 +1057,25 @@ function updatePluginBlocksChart(items) {
             responsive: true,
             maintainAspectRatio: false,
             layout: { padding: { bottom: 32 } },
-            plugins: {
+            plugins: { 
                 legend: { display: false },
                 title: { display: true, text: 'Top plugins that blocked requests', color: '#cbd5e1' },
                 tooltip: {
                     backgroundColor: 'rgba(30, 39, 70, 0.95)',
                     titleColor: '#f8fafc',
                     bodyColor: '#cbd5e1',
-                    borderColor: '#14b8a6',
+                    borderColor: '#6366f1',
                     borderWidth: 1
                 }
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: 'rgba(148, 163, 184, 0.1)' },
+            scales: { 
+                y: { 
+                    beginAtZero: true, 
+                    grid: { color: 'rgba(148, 163, 184, 0.1)' }, 
                     title: { display: true, text: 'Blocked requests', color: '#cbd5e1' },
                     ticks: { color: '#94a3b8' }
                 },
-                x: {
+                x: { 
                     title: { display: true, text: 'Plugin', color: '#cbd5e1' },
                     ticks: { color: '#94a3b8' },
                     grid: { color: 'rgba(148, 163, 184, 0.1)' }
@@ -1118,7 +1099,7 @@ function updateLayerComparisonChart(layerComparison) {
             datasets: [{
                 label: 'Blocked requests by layer',
                 data: values,
-                backgroundColor: ['#06b6d4', '#10b981', '#14b8a6'],
+                backgroundColor: ['#06b6d4', '#10b981', '#6366f1'],
                 borderRadius: 6,
                 borderSkipped: false
             }]
@@ -1127,25 +1108,25 @@ function updateLayerComparisonChart(layerComparison) {
             responsive: true,
             maintainAspectRatio: false,
             layout: { padding: { bottom: 24 } },
-            plugins: {
+            plugins: { 
                 legend: { display: false },
                 title: { display: true, text: 'Comparison of blocked requests by layer', color: '#cbd5e1' },
                 tooltip: {
                     backgroundColor: 'rgba(30, 39, 70, 0.95)',
                     titleColor: '#f8fafc',
                     bodyColor: '#cbd5e1',
-                    borderColor: '#14b8a6',
+                    borderColor: '#6366f1',
                     borderWidth: 1
                 }
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { color: 'rgba(148, 163, 184, 0.1)' },
+            scales: { 
+                y: { 
+                    beginAtZero: true, 
+                    grid: { color: 'rgba(148, 163, 184, 0.1)' }, 
                     title: { display: true, text: 'Blocked requests', color: '#cbd5e1' },
                     ticks: { color: '#94a3b8' }
                 },
-                x: {
+                x: { 
                     title: { display: true, text: 'Layer', color: '#cbd5e1' },
                     ticks: { color: '#94a3b8' },
                     grid: { color: 'rgba(148, 163, 184, 0.1)' }
@@ -1168,7 +1149,7 @@ function updateLayerPieChart(layerComparison) {
             labels,
             datasets: [{
                 data: values,
-                backgroundColor: ['#06b6d4', '#10b981', '#14b8a6'],
+                backgroundColor: ['#06b6d4', '#10b981', '#6366f1'],
                 borderColor: '#1e2746',
                 borderWidth: 2
             }]
@@ -1178,17 +1159,17 @@ function updateLayerPieChart(layerComparison) {
             maintainAspectRatio: false,
             layout: { padding: { bottom: 16 } },
             plugins: {
-                legend: {
+                legend: { 
                     position: 'bottom',
                     labels: { color: '#cbd5e1' }
                 },
-                tooltip: {
+                tooltip: { 
                     backgroundColor: 'rgba(30, 39, 70, 0.95)',
                     titleColor: '#f8fafc',
                     bodyColor: '#cbd5e1',
-                    borderColor: '#14b8a6',
+                    borderColor: '#6366f1',
                     borderWidth: 1,
-                    callbacks: { label: (ctx) => `${ctx.label}: ${ctx.formattedValue}` }
+                    callbacks: { label: (ctx) => `${ctx.label}: ${ctx.formattedValue}` } 
                 }
             },
             cutout: '60%'
@@ -1199,13 +1180,13 @@ function updateLayerPieChart(layerComparison) {
 // Update analytics summary
 function updateAnalyticsSummary(data) {
     const container = document.getElementById('analytics-summary');
-
+    
     const summaryItems = [
         { label: 'Total Requests', value: data.total_requests },
         { label: 'Total Blocked', value: data.total_blocked },
         { label: 'Block Rate', value: ((data.total_blocked / data.total_requests) * 100).toFixed(1) + '%' }
     ];
-
+    
     container.innerHTML = '';
     summaryItems.forEach(item => {
         const div = document.createElement('div');
@@ -1270,7 +1251,7 @@ function showRequestDetailsModal(requestData) {
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
     `;
-
+    
     // Create and show modal
     const modal = document.createElement('div');
     modal.className = 'modal fade';
@@ -1282,14 +1263,14 @@ function showRequestDetailsModal(requestData) {
             </div>
         </div>
     `;
-
+    
     document.body.appendChild(modal);
-
+    
     const bsModal = new bootstrap.Modal(modal);
     bsModal.show();
-
+    
     // Remove modal from DOM after it's hidden
-    modal.addEventListener('hidden.bs.modal', function () {
+    modal.addEventListener('hidden.bs.modal', function() {
         document.body.removeChild(modal);
     });
 }
@@ -1298,12 +1279,12 @@ function showRequestDetailsModal(requestData) {
 function showNotification(message, type = 'info') {
     const toast = document.getElementById('notification-toast');
     const toastMessage = document.getElementById('toast-message');
-
+    
     toastMessage.textContent = message;
-
+    
     // Update toast classes based on type
     toast.className = `toast ${type === 'error' ? 'bg-danger text-white' : ''}`;
-
+    
     const bsToast = new bootstrap.Toast(toast);
     bsToast.show();
 }
@@ -1311,7 +1292,7 @@ function showNotification(message, type = 'info') {
 // Format timestamp
 function formatTime(timestamp) {
     if (!timestamp) return 'N/A';
-
+    
     try {
         const date = new Date(timestamp);
         return date.toLocaleString();
